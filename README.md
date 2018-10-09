@@ -2,7 +2,7 @@
 Projeto de Envio de SMS (Individual e em Massa) para uso em Asterisk (Issabel).
 
 ## TODO
-- Automatizar Listagem dos Modens
+- Concluído: Automatizar Listagem dos Modens.
 - Traduzir Mensagem de Retorno
 - Concluir seção 'Em Massa'
 
@@ -10,10 +10,6 @@ Projeto de Envio de SMS (Individual e em Massa) para uso em Asterisk (Issabel).
 - Possuir um Issabel com Chan_dongle instalado, funcional e com modens ativos já em funcionamento.
 
 ## Instalação em Issabel
-- Alterar os values dos Options para os nomes usados no sistema
-```
-<option value="modulo01" default>Chip 1</option>
-```
 - Criar uma pasta SMS (sugestão) em:
 ```
 /var/www/html/
@@ -27,6 +23,9 @@ Ex:
 ```
 https://192.168.0.3/sms
 ```
+
+## Outras Informações
+- O index.php faz uma leitura do arquivo dongle.conf para identificar cada dongle de forma automática.
 
 ## Sobre
 - O projeto utiliza o CDN do bootstrap 4.
