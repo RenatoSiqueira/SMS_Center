@@ -19,7 +19,11 @@
                 $output = shell_exec("$command \"dongle sms $canal $destino $mensagem \" ");
             }
 
+            /* Retorno do Envio */
             $retorno = nl2br($output);
+            
+            /* Lendo dongles.conf */
+            $lines = file ('/etc/asterisk/dongle.conf');
         ?>
 
         <!-- MENU -->
@@ -29,7 +33,7 @@
                 <h3 class="masthead-brand">SMS Center</h3>
                 <nav class="nav nav-masthead justify-content-center">
                 <a class="nav-link" href="#void" onclick="changeOption('individual')">Individual</a>
-                <a class="nav-link" href="#void" onclick="changeOption('emMassa')">Em Série</a>
+                <!-- <a class="nav-link" href="#void" onclick="changeOption('emMassa')">Em Série</a> -->
                 </nav>
             </div>
             </header>
@@ -41,7 +45,7 @@
                     <form class="form-horizontal" method="POST">
                         <fieldset>
                             <?php if($retorno) { ?>
-                            <div class="form-group col-md-12" style="display:none;">
+                            <div class="form-group col-md-12">
                                 <div class="alert alert-info">
                                     <h4 class="alert-heading"><?php echo "$destino"; ?></h4>
                                     <p><?php echo "$mensagem"; ?></p>
@@ -50,19 +54,26 @@
                                 </div>
                             </div>
                             <?php } ?>
-                        
+
+                       
                             <!-- Select Chip -->
                             <div class="form-group">
                                 <label class="col-md-12 control-label" for="selectChip">Selecione o Chip</label>
                                 <div class="col-md-12">
                                     <select id="selectChip" name="canal" class="form-control">
-                                    <option value="modulo01" default>Chip 1</option>
-                                    <option value="modulo02">Chip 2</option>
-                                    <option value="modulo03">Chip 3</option>
-                                    <option value="modulo04">Chip 4</option>
-                                    <option value="modulo05">Chip 5</option>
-                                    <option value="modulo06">Chip 6</option>
-                                    <option value="modulo07">Chip 7</option>
+
+                                    <?php
+                                        foreach ($lines as $line_num => $line) {
+                                            if ( preg_match("/\[.+\]/", $line, $matches) ) {
+                                                if ( $matches[0] != '[general]' && $matches[0] != '[defaults]' && $matches[0] != '[device]' ) {
+                                                    $nomeDongle = substr($matches[0], 0, -1);
+                                                    $nomeDongle = substr($nomeDongle, 1);
+                                                    echo "<option value='" . $nomeDongle . "'>" . $nomeDongle . "</option>";
+                                                }
+                                            }
+                                        }
+                                    ?>
+
                                     </select>
                                 </div>
                             </div>
@@ -185,8 +196,8 @@
                             <div class="form-group">
                                 <label class="col-md-12 control-label" for="textarea">Mensagem</label>
                                 <div class="col-md-12">
-                                    <textarea class="form-control" id="TxtObservacoes" name="mensagem" rows="5">Olá! Sua Ordem de Serviço é XXXX. Sua instalação está pré-agendado para o dia __/__/__.</textarea>
-                                    <span class="help-block"><span data-js="restantes">140</span> Restantes</span>
+                                    <textarea class="form-control" id="TxtObservacoes1" name="mensagem" rows="5">Olá! Sua Ordem de Serviço é XXXX. Sua instalação está pré-agendado para o dia __/__/__.</textarea>
+                                    <span class="help-block"><span data-js="restantes1">140</span> Restantes</span>
                                 </div>
                             </div>
             
