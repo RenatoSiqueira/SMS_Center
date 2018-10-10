@@ -2,7 +2,7 @@
 Projeto de Envio de SMS (Individual e em Massa) para uso em Asterisk (Issabel).
 
 ## TODO
-- Concluído: Automatizar Listagem dos Modens.
+- **Concluído:** Automatizar Listagem dos Modens.
 - Traduzir Mensagem de Retorno
 - Concluir seção 'Em Massa'
 
