@@ -64,7 +64,7 @@
 
                                     <?php
                                         foreach ($lines as $line_num => $line) {
-                                            if ( preg_match("/\[.+\]/", $line, $matches) ) {
+                                            if ( preg_match("/^\[.+\]/", $line, $matches) ) {
                                                 if ( $matches[0] != '[general]' && $matches[0] != '[defaults]' && $matches[0] != '[device]' ) {
                                                     $nomeDongle = substr($matches[0], 0, -1);
                                                     $nomeDongle = substr($nomeDongle, 1);
