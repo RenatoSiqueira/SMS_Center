@@ -126,39 +126,39 @@
 
             /* Recebendo/Tratando SMS para Enviar */
             $destino 	= $_POST[destino];
-            $mensagem 	= str_replace(array("\n","\r"," "), " ", $_POST[mensagem]);
+//            $mensagem 	= str_replace(array("\n","\r"," "), " ", $_POST[mensagem]);
+            $mensagem 	= $_POST[mensagem];
             $canal 		= $_POST[canal];
             if($destino && $mensagem && $canal){
                 $output = shell_exec("$command \"dongle sms $canal $destino $mensagem \" ");
             }
 
+            function msgAlert($tipo, $mensagemRetorno, $destino, $mensagem) {
+                return '
+                    <div class="form-group col-md-12">
+                        <div class="alert alert-' . $tipo . '">
+                            <h4 class="alert-heading">' . $destino . '</h4>
+                            <p>' . $mensagem . '</p>
+                            <hr>
+                            <p class="mb-0"><strong>' . $mensagemRetorno . '</strong></p>
+                        </div>
+                    </div>
+                ';
+            }
+
             /* Retorno do Envio (resposta do modem) */
             $posDisabled = strpos( $output, 'disabled' );
             $posError = strpos( $output, 'error' );
-            $posQueue = strpos( $output, 'queue' );
+            $posQueued = strpos( $output, 'queued' );
 
-            if( $posDisabled === false || $posError === false ){
-                $retorno = '
-                    <div class="form-group col-md-12">
-                        <div class="alert alert-warning">
-                            <h4 class="alert-heading">' . $destino . '</h4>
-                            <p>' . $mensagem . '</p>
-                            <hr>
-                            <p class="mb-0"><strong>Erro ao Enviar Mensagem. Tente Novamente. </strong></p>
-                        </div>
-                    </div>
-                ';
-            } else {
-                $retorno = '
-                    <div class="form-group col-md-12">
-                        <div class="alert alert-success">
-                            <h4 class="alert-heading">' . $destino . '</h4>
-                            <p>' . $mensagem . '</p>
-                            <hr>
-                            <p class="mb-0"><strong>Mensagem encaminhada para Enviar.</strong></p>
-                        </div>
-                    </div>
-                ';
+            if($posDisabled)
+                $retorno = msgAlert('warning', 'Erro: Modem Desativado/Desligado. [' . nl2br($output) . ']', $destino, $mensagem);
+
+            if($posError)
+                $retorno = msgAlert('warning', 'Erro: Não Foi Possível Enviar. [' . nl2br($output) . ']', $destino, $mensagem);
+
+            if($posQueued) {
+                $retorno = msgAlert('success', 'Mensagem encaminhada para Enviar.', $destino, $mensagem);
                 /* Update qtde Msg Enviadas */
                 $ini->data['qtdeSms'][$canal] = intval($smsIni['qtdeSms'][$canal]) + 1;
                 $ini->write();
@@ -239,7 +239,7 @@
 
                                     </select>
                                     <br/>
-                                    <textarea class="form-control" id="TxtObservacoes" name="mensagem" rows="5">Olá! Sua Ordem de Serviço é XXXX. Sua instalação está pré-agendado para o dia __/__/__.</textarea>
+                                    <input class="form-control" id="TxtObservacoes" name="mensagem" value="Olá! Sua Ordem de Serviço é XXXX. Sua instalação está pré-agendado para o dia __/__/__.">
                                     <span class="help-block"><span data-js="restantes">140</span> Restantes</span>
                                 </div>
                             </div>
@@ -431,6 +431,8 @@
 
     <script>
         function changeOption(option) {
+            event.preventDefault();
+            
             if(option === 'individual') {
                 document.getElementById('SMSIndividual').style.display = 'block';
                 document.getElementById('SMSEmMassa').style.display = 'none';
@@ -448,13 +450,11 @@
                 document.getElementById('SMSEmMassa').style.display = 'none';
                 document.getElementById('gerenciamentoMsg').style.display = 'block';
             }
-
         }
 
         function changeMsgs(option) {
             <?php
-                foreach($smsIni['mensagens'] as $indice => $valor)
-                {
+                foreach($smsIni['mensagens'] as $indice => $valor) {
                     echo "
                         if('" . $indice . "' == option) {
                             document.querySelector('#TxtObservacoes').value = '" . $smsIni['mensagens'][$indice] . "';
