@@ -152,10 +152,10 @@
             $posQueued = strpos( $output, 'queued' );
 
             if($posDisabled)
-                $retorno = msgAlert('warning', 'Erro: Modem Desativado/Desligado. [' . nl2br($output) . ']', $destino, $mensagem);
+                $retorno = msgAlert('warning', 'Erro:<br/> Modem Desativado/Desligado. ' . nl2br($output), $destino, $mensagem);
 
             if($posError)
-                $retorno = msgAlert('warning', 'Erro: Não Foi Possível Enviar. [' . nl2br($output) . ']', $destino, $mensagem);
+                $retorno = msgAlert('warning', 'Erro:<br/> Não Foi Possível Enviar. ' . nl2br($output), $destino, $mensagem);
 
             if($posQueued) {
                 $retorno = msgAlert('success', 'Mensagem encaminhada para Enviar.', $destino, $mensagem);
@@ -202,7 +202,13 @@
                                                 if ( $matches[0] != '[general]' && $matches[0] != '[defaults]' && $matches[0] != '[device]' ) {
                                                     $nomeDongle = substr($matches[0], 0, -1);
                                                     $nomeDongle = substr($nomeDongle, 1);
-                                                    echo "<option value='" . $nomeDongle . "'>" . $nomeDongle . " - " . $smsIni['qtdeSms'][$nomeDongle] . " Mensagen(s) Enviada(s)</option>";
+                                                    
+                                                    $qtdeSmsModem = $smsIni['qtdeSms'][$nomeDongle];
+                                                    if($qtdeSmsModem) { 
+                                                        $qtdeSmsModem = " - " . $qtdeSmsModem . " Mensagen(s) Enviada(s)";
+                                                    }
+
+                                                    echo "<option value='" . $nomeDongle . "'>" . $nomeDongle . $qtdeSmsModem . "</option>";
                                                 }
                                             }
                                         }
